@@ -1,0 +1,12 @@
+# Proxy list format:
+# One proxy per line
+# Format: ip:port or ip:port:username:password
+# Examples:
+# 192.168.1.1:8080
+# 192.168.1.1:8080:username:password
+# http://192.168.1.1:8080
+# socks5://192.168.1.1:1080
+
+# Add your proxies here:
+# 1.2.3.4:8080
+# 5.6.7.8:3128:user:pass

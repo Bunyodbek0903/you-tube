@@ -1,0 +1,10 @@
+# Format: email:password
+# One account per line
+# Example:
+# user1@gmail.com:password123
+# user2@gmail.com:password456
+# user3@gmail.com:password789
+
+# Add your Google accounts here:
+# email1@gmail.com:password1
+# email2@gmail.com:password2
