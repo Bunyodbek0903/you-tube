@@ -27,7 +27,12 @@ class YouTubeAutomation:
         self.config = Config()
         self.logger = Logger(self.config.LOG_FILE)
         self.result_logger = ResultLogger(self.config.RESULTS_FILE)
-        self.security_manager = SecurityManager()
+        self.security_manager = SecurityManager(
+            proxy_file=self.config.PROXY_LIST_FILE,
+            use_proxy_api=self.config.USE_PROXY_API,
+            logger=self.logger,
+            config=self.config
+        )
         self.anti_detection = AntiDetection()
         self.cookie_manager = CookieManager()
         self.captcha_solver = CaptchaSolver(self.config.ANTICAPTCHA_API_KEY)
@@ -41,7 +46,11 @@ class YouTubeAutomation:
             options = self.anti_detection.get_browser_options(self.config.HEADLESS)
             
             if proxy:
-                options.add_argument(f'--proxy-server={proxy}')
+                # Extract proxy URL from proxy dict
+                proxy_url = proxy.get('http', '').replace('http://', '')
+                if proxy_url:
+                    options.add_argument(f'--proxy-server={proxy_url}')
+                    self.logger.info(f"Added proxy to browser: {proxy_url}")
             
             service = Service(ChromeDriverManager().install())
             self.driver = webdriver.Chrome(service=service, options=options)
@@ -356,7 +365,14 @@ class YouTubeAutomation:
             self.logger.info(f"Processing account: {account['email']}")
             
             # Setup driver with proxy if available
-            proxy = self.security_manager.get_working_proxy() if self.config.USE_PROXY else None
+            proxy = None
+            if self.config.USE_PROXY:
+                proxy = self.security_manager.get_working_proxy()
+                if proxy:
+                    self.logger.info(f"Using proxy: {proxy['http']}")
+                else:
+                    self.logger.warning("No working proxy found, continuing without proxy")
+            
             if not self.setup_driver(proxy):
                 return False
             

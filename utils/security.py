@@ -3,17 +3,22 @@ import time
 import requests
 from fake_useragent import UserAgent
 from typing import List, Dict, Optional
+from utils.proxy_manager import ProxyManager
 
 class SecurityManager:
-    def __init__(self, proxy_file: str = "proxies.txt", user_agent_file: str = "user_agents.txt"):
+    def __init__(self, proxy_file: str = "proxies.txt", user_agent_file: str = "user_agents.txt", 
+                 use_proxy_api: bool = True, logger=None, config=None):
         self.proxy_file = proxy_file
         self.user_agent_file = user_agent_file
-        self.proxies = self.load_proxies()
+        self.use_proxy_api = use_proxy_api
+        self.logger = logger
+        self.config = config
+        self.proxy_manager = ProxyManager(use_api=use_proxy_api, proxy_file=proxy_file, logger=logger, config=config)
         self.user_agents = self.load_user_agents()
         self.ua = UserAgent()
     
     def load_proxies(self) -> List[str]:
-        """Load proxies from file"""
+        """Load proxies from file (legacy method)"""
         try:
             with open(self.proxy_file, 'r') as f:
                 return [line.strip() for line in f if line.strip()]
@@ -35,21 +40,28 @@ class SecurityManager:
         return self.ua.random
     
     def get_random_proxy(self) -> Optional[Dict[str, str]]:
-        """Get random proxy"""
-        if not self.proxies:
-            return None
-        
-        proxy = random.choice(self.proxies)
-        if '://' in proxy:
-            return {
-                'http': proxy,
-                'https': proxy
-            }
+        """Get random proxy using API or file"""
+        if self.use_proxy_api:
+            return self.proxy_manager.get_proxy()
         else:
-            return {
-                'http': f'http://{proxy}',
-                'https': f'http://{proxy}'
-            }
+            # Fallback to file-based method
+            if not hasattr(self, 'proxies'):
+                self.proxies = self.load_proxies()
+            
+            if not self.proxies:
+                return None
+            
+            proxy = random.choice(self.proxies)
+            if '://' in proxy:
+                return {
+                    'http': proxy,
+                    'https': proxy
+                }
+            else:
+                return {
+                    'http': f'http://{proxy}',
+                    'https': f'http://{proxy}'
+                }
     
     def test_proxy(self, proxy: Dict[str, str]) -> bool:
         """Test if proxy is working"""
@@ -65,16 +77,23 @@ class SecurityManager:
     
     def get_working_proxy(self) -> Optional[Dict[str, str]]:
         """Get a working proxy"""
-        if not self.proxies:
+        if self.use_proxy_api:
+            return self.proxy_manager.get_proxy()
+        else:
+            # Fallback to file-based method
+            if not hasattr(self, 'proxies'):
+                self.proxies = self.load_proxies()
+            
+            if not self.proxies:
+                return None
+            
+            # Test up to 5 random proxies
+            for _ in range(5):
+                proxy = self.get_random_proxy()
+                if proxy and self.test_proxy(proxy):
+                    return proxy
+            
             return None
-        
-        # Test up to 5 random proxies
-        for _ in range(5):
-            proxy = self.get_random_proxy()
-            if proxy and self.test_proxy(proxy):
-                return proxy
-        
-        return None
 
 class AntiDetection:
     def __init__(self):

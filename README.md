@@ -68,7 +68,25 @@ email2@gmail.com:password2
 email3@gmail.com:password3
 ```
 
-### 5. Proxy faylini yarating (ixtiyoriy)
+### 5. Proxy sozlamalari
+
+Loyiha ProxyScrape API orqali proxy serverlarni avtomatik olish imkoniyatiga ega.
+
+#### API orqali (tavsiya etiladi):
+
+`.env` faylida proxy sozlamalarini o'zgartiring:
+
+```env
+USE_PROXY=True
+USE_PROXY_API=True
+PROXY_TYPE=http
+PROXY_TIMEOUT=10000
+PROXY_SSL=all
+PROXY_ANONYMITY=all
+PROXY_COUNTRY=all
+```
+
+#### Fayl orqali (fallback):
 
 ```bash
 cp proxies.txt.example proxies.txt
@@ -85,6 +103,14 @@ cp proxies.txt.example proxies.txt
 
 ```bash
 cp user_agents.txt.example user_agents.txt
+```
+
+### 7. Proxy test qilish
+
+Proxy sozlamalarini test qilish uchun:
+
+```bash
+python test_proxy.py
 ```
 
 ## Ishlatish
@@ -134,7 +160,13 @@ youtube-automation/
 |-------------|--------|---------|
 | `ANTICAPTCHA_API_KEY` | Anti-captcha API kaliti | - |
 | `USE_PROXY` | Proxy ishlatish | False |
+| `USE_PROXY_API` | Proxy API ishlatish | True |
 | `PROXY_LIST_FILE` | Proxy fayl nomi | proxies.txt |
+| `PROXY_TYPE` | Proxy turi (http, https, socks4, socks5) | http |
+| `PROXY_TIMEOUT` | Proxy timeout (millisekundlarda) | 10000 |
+| `PROXY_SSL` | SSL sozlamalari (yes, no, all) | all |
+| `PROXY_ANONYMITY` | Anonimlik darajasi (elite, anonymous, transparent, all) | all |
+| `PROXY_COUNTRY` | Mamlakat kodi yoki 'all' | all |
 | `HEADLESS` | Headless browser | False |
 | `BROWSER_TIMEOUT` | Browser timeout | 30 |
 | `MIN_DELAY` | Minimal delay | 2 |

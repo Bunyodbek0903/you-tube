@@ -9,7 +9,16 @@ class Config:
     
     # Proxy settings
     USE_PROXY = os.getenv('USE_PROXY', 'False').lower() == 'true'
+    USE_PROXY_API = os.getenv('USE_PROXY_API', 'True').lower() == 'true'
     PROXY_LIST_FILE = os.getenv('PROXY_LIST_FILE', 'proxies.txt')
+    
+    # ProxyScrape API settings
+    PROXY_TYPE = os.getenv('PROXY_TYPE', 'http')  # http, https, socks4, socks5
+    PROXY_TIMEOUT = int(os.getenv('PROXY_TIMEOUT', '10000'))  # milliseconds
+    PROXY_SSL = os.getenv('PROXY_SSL', 'all')  # yes, no, all
+    PROXY_ANONYMITY = os.getenv('PROXY_ANONYMITY', 'all')  # elite, anonymous, transparent, all
+    PROXY_COUNTRY = os.getenv('PROXY_COUNTRY', 'all')  # country code or 'all'
+    PROXY_CACHE_DURATION = int(os.getenv('PROXY_CACHE_DURATION', '300'))  # seconds
     
     # Browser settings
     HEADLESS = os.getenv('HEADLESS', 'False').lower() == 'true'
