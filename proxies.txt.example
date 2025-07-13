@@ -1,0 +1,12 @@
+# Proxy ro'yxati format:
+# Har bir proxy uchun bitta qator
+# Format: ip:port yoki ip:port:foydalanuvchi:parol
+# Misollar:
+# 192.168.1.1:8080
+# 192.168.1.1:8080:foydalanuvchi:parol
+# http://192.168.1.1:8080
+# socks5://192.168.1.1:1080
+
+# Proxylaringizni bu yerga qo'shing:
+# 1.2.3.4:8080
+# 5.6.7.8:3128:foydalanuvchi:parol
