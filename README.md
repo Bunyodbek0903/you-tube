@@ -1,4 +1,4 @@
-# YouTube Channel Creation Automation
+# YouTube Kanal Yaratish Avtomatizatsiyasi
 
 Bu loyiha Google hisoblarini ishlatib YouTube kanallarini avtomatik yaratish uchun mo'ljallangan. Loyiha xavfsizlik choralari, proxy rotation, captcha yechish va anti-detection texnikalarini o'z ichiga oladi.
 
@@ -6,18 +6,18 @@ Bu loyiha Google hisoblarini ishlatib YouTube kanallarini avtomatik yaratish uch
 
 - ✅ Google hisoblariga avtomatik kirish
 - ✅ YouTube kanal yaratish
-- ✅ Random kanal ma'lumotlari generatsiya qilish
+- ✅ Tasodifiy kanal ma'lumotlari generatsiyasi
 - ✅ Proxy rotation va IP o'zgartirish
 - ✅ User agent rotation
 - ✅ Anti-captcha integratsiyasi
 - ✅ Cookie management
-- ✅ Human-like behavior simulation
-- ✅ Comprehensive logging va monitoring
+- ✅ Inson kabi xatti-harakatlar simulyatsiyasi
+- ✅ Keng qamrovli logging va monitoring
 - ✅ Xavfsizlik choralari
 
 ## O'rnatish
 
-### 1. Dependencies o'rnatish
+### 1. Dasturlarni o'rnatish
 
 ```bash
 pip install -r requirements.txt
@@ -38,20 +38,17 @@ cp .env.example .env
 Kerakli sozlamalarni to'ldiring:
 
 ```env
-# Anti-captcha API key (majburiy)
+# Anti-captcha API kaliti (majburiy)
 ANTICAPTCHA_API_KEY=your_anticaptcha_api_key_here
 
 # Proxy sozlamalari
 USE_PROXY=False
-PROXY_LIST_FILE=proxies.txt
-
-# Browser sozlamalari
-HEADLESS=False
-BROWSER_TIMEOUT=30
-
-# Delay sozlamalari (sekundlarda)
-MIN_DELAY=2
-MAX_DELAY=5
+USE_PROXY_API=True
+PROXY_TYPE=http
+PROXY_TIMEOUT=10000
+PROXY_SSL=all
+PROXY_ANONYMITY=all
+PROXY_COUNTRY=all
 ```
 
 ### 4. Hisoblar faylini yarating
@@ -63,9 +60,9 @@ cp accounts.txt.example accounts.txt
 `accounts.txt` fayliga Google hisoblaringizni qo'shing:
 
 ```
-email1@gmail.com:password1
-email2@gmail.com:password2
-email3@gmail.com:password3
+email1@gmail.com:parol1
+email2@gmail.com:parol2
+email3@gmail.com:parol3
 ```
 
 ### 5. Proxy sozlamalari
@@ -96,7 +93,7 @@ cp proxies.txt.example proxies.txt
 
 ```
 192.168.1.1:8080
-192.168.1.2:3128:username:password
+192.168.1.2:3128:foydalanuvchi:parol
 ```
 
 ### 6. User agents faylini yarating (ixtiyoriy)
@@ -127,8 +124,8 @@ Loyiha quyidagi xavfsizlik choralarini o'z ichiga oladi:
 
 1. **Proxy Rotation**: Har bir sessiya uchun boshqa proxy ishlatish
 2. **User Agent Rotation**: Har bir sessiya uchun boshqa user agent
-3. **Random Delays**: Human-like behavior uchun random kechikishlar
-4. **Anti-detection**: Browser automation belgilarini olib tashlash
+3. **Random Delays**: Inson kabi xatti-harakatlar uchun tasodifiy kechikishlar
+4. **Anti-detection**: Browser avtomatlashtirish belgilarini olib tashlash
 5. **Captcha Solving**: Anti-captcha API orqali captcha yechish
 6. **Cookie Management**: Sessiya ma'lumotlarini saqlash
 
@@ -138,15 +135,15 @@ Loyiha quyidagi xavfsizlik choralarini o'z ichiga oladi:
 youtube-automation/
 ├── youtube_automation.py      # Asosiy dastur
 ├── config.py                  # Konfiguratsiya
-├── requirements.txt           # Dependencies
-├── .env                      # Environment variables
+├── requirements.txt           # Dasturlar
+├── .env                      # Muhit o'zgaruvchilari
 ├── accounts.txt              # Google hisoblar
 ├── proxies.txt               # Proxy serverlar
-├── user_agents.txt           # User agents
+├── user_agents.txt           # User agentlar
 ├── results.json              # Natijalar
 ├── youtube_automation.log    # Log fayl
 └── utils/
-    ├── logger.py             # Logging utilities
+    ├── logger.py             # Logging dasturlari
     ├── security.py           # Xavfsizlik choralari
     ├── captcha_solver.py     # Captcha yechish
     └── data_generator.py     # Ma'lumotlar generatsiyasi
@@ -154,10 +151,10 @@ youtube-automation/
 
 ## Konfiguratsiya
 
-### Environment Variables
+### Muhit o'zgaruvchilari
 
-| O'zgaruvchi | Tavsif | Default |
-|-------------|--------|---------|
+| O'zgaruvchi | Tavsif | Standart |
+|-------------|--------|----------|
 | `ANTICAPTCHA_API_KEY` | Anti-captcha API kaliti | - |
 | `USE_PROXY` | Proxy ishlatish | False |
 | `USE_PROXY_API` | Proxy API ishlatish | True |
@@ -169,8 +166,8 @@ youtube-automation/
 | `PROXY_COUNTRY` | Mamlakat kodi yoki 'all' | all |
 | `HEADLESS` | Headless browser | False |
 | `BROWSER_TIMEOUT` | Browser timeout | 30 |
-| `MIN_DELAY` | Minimal delay | 2 |
-| `MAX_DELAY` | Maksimal delay | 5 |
+| `MIN_DELAY` | Minimal kechikish | 2 |
+| `MAX_DELAY` | Maksimal kechikish | 5 |
 | `ACCOUNTS_FILE` | Hisoblar fayli | accounts.txt |
 | `RESULTS_FILE` | Natijalar fayli | results.json |
 | `LOG_FILE` | Log fayli | youtube_automation.log |
@@ -179,14 +176,14 @@ youtube-automation/
 
 #### accounts.txt
 ```
-email1@gmail.com:password1
-email2@gmail.com:password2
+email1@gmail.com:parol1
+email2@gmail.com:parol2
 ```
 
 #### proxies.txt
 ```
 192.168.1.1:8080
-192.168.1.2:3128:username:password
+192.168.1.2:3128:foydalanuvchi:parol
 http://192.168.1.3:8080
 socks5://192.168.1.4:1080
 ```
@@ -217,7 +214,7 @@ Dastur ishlagandan so'ng quyidagi fayllar yaratiladi:
       "timestamp": "2024-01-01T12:05:00",
       "email": "user1@gmail.com",
       "success": true,
-      "details": "Channel created successfully"
+      "details": "Kanal muvaffaqiyatli yaratildi"
     }
   ]
 }
@@ -256,7 +253,7 @@ tail -f youtube_automation.log
 Muammolar bo'lsa:
 1. Log faylini tekshiring
 2. Konfiguratsiyani tekshiring
-3. Dependencies o'rnatilganini tekshiring
+3. Dasturlar o'rnatilganini tekshiring
 4. Internet aloqasini tekshiring
 
 ## Litsenziya

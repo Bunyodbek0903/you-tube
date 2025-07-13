@@ -4,6 +4,7 @@ from typing import Optional
 from anticaptchaofficial.recaptchav2proxyless import recaptchaV2Proxyless
 from anticaptchaofficial.recaptchav3proxyless import recaptchaV3Proxyless
 from anticaptchaofficial.imagecaptcha import imagecaptcha
+from selenium.common.exceptions import NoSuchElementException
 
 class CaptchaSolver:
     def __init__(self, api_key: str):
@@ -11,7 +12,7 @@ class CaptchaSolver:
         self.solver = None
     
     def solve_recaptcha_v2(self, site_key: str, url: str) -> Optional[str]:
-        """Solve reCAPTCHA v2"""
+        """reCAPTCHA v2 ni yechish"""
         try:
             solver = recaptchaV2Proxyless()
             solver.set_verbose(1)
@@ -23,14 +24,14 @@ class CaptchaSolver:
             if response != 0:
                 return response
             else:
-                print(f"Error solving captcha: {solver.error_code}")
+                print(f"Captcha yechishda xato: {solver.error_code}")
                 return None
         except Exception as e:
-            print(f"Error in solve_recaptcha_v2: {e}")
+            print(f"solve_recaptcha_v2 da xato: {e}")
             return None
     
     def solve_recaptcha_v3(self, site_key: str, url: str, action: str = "submit") -> Optional[str]:
-        """Solve reCAPTCHA v3"""
+        """reCAPTCHA v3 ni yechish"""
         try:
             solver = recaptchaV3Proxyless()
             solver.set_verbose(1)
@@ -44,14 +45,14 @@ class CaptchaSolver:
             if response != 0:
                 return response
             else:
-                print(f"Error solving captcha: {solver.error_code}")
+                print(f"Captcha yechishda xato: {solver.error_code}")
                 return None
         except Exception as e:
-            print(f"Error in solve_recaptcha_v3: {e}")
+            print(f"solve_recaptcha_v3 da xato: {e}")
             return None
     
     def solve_image_captcha(self, image_path: str) -> Optional[str]:
-        """Solve image captcha"""
+        """Rasm captcha ni yechish"""
         try:
             solver = imagecaptcha()
             solver.set_verbose(1)
@@ -66,20 +67,20 @@ class CaptchaSolver:
             if response != 0:
                 return response
             else:
-                print(f"Error solving image captcha: {solver.error_code}")
+                print(f"Rasm captcha yechishda xato: {solver.error_code}")
                 return None
         except Exception as e:
-            print(f"Error in solve_image_captcha: {e}")
+            print(f"solve_image_captcha da xato: {e}")
             return None
     
     def solve_image_captcha_base64(self, image_base64: str) -> Optional[str]:
-        """Solve image captcha from base64 string"""
+        """Base64 rasm captcha ni yechish"""
         try:
             solver = imagecaptcha()
             solver.set_verbose(1)
             solver.set_key(self.api_key)
             
-            # Remove data:image/...;base64, prefix if present
+            # data:image/...;base64, prefiksini olib tashlash
             if ',' in image_base64:
                 image_base64 = image_base64.split(',')[1]
             
@@ -90,14 +91,14 @@ class CaptchaSolver:
             if response != 0:
                 return response
             else:
-                print(f"Error solving image captcha: {solver.error_code}")
+                print(f"Base64 rasm captcha yechishda xato: {solver.error_code}")
                 return None
         except Exception as e:
-            print(f"Error in solve_image_captcha_base64: {e}")
+            print(f"solve_image_captcha_base64 da xato: {e}")
             return None
     
     def wait_for_captcha_solution(self, timeout: int = 60) -> Optional[str]:
-        """Wait for captcha solution with timeout"""
+        """Captcha yechilishini timeout bilan kutish"""
         start_time = time.time()
         
         while time.time() - start_time < timeout:
@@ -112,9 +113,9 @@ class CaptchaDetector:
         self.driver = driver
     
     def detect_recaptcha(self) -> bool:
-        """Detect if reCAPTCHA is present"""
+        """reCAPTCHA mavjudligini aniqlash"""
         try:
-            # Check for reCAPTCHA elements
+            # reCAPTCHA elementlarini tekshirish
             recaptcha_selectors = [
                 'iframe[src*="recaptcha"]',
                 '.g-recaptcha',
@@ -123,18 +124,22 @@ class CaptchaDetector:
             ]
             
             for selector in recaptcha_selectors:
-                elements = self.driver.find_elements_by_css_selector(selector)
-                if elements:
-                    return True
+                try:
+                    elements = self.driver.find_elements_by_css_selector(selector)
+                    if elements:
+                        return True
+                except NoSuchElementException:
+                    continue
             
             return False
+            
         except:
             return False
     
     def get_recaptcha_site_key(self) -> Optional[str]:
-        """Get reCAPTCHA site key"""
+        """reCAPTCHA site key ni olish"""
         try:
-            # Try different selectors for site key
+            # Site key uchun turli selectorlarni sinab ko'rish
             selectors = [
                 '[data-sitekey]',
                 '.g-recaptcha[data-sitekey]',
@@ -153,9 +158,9 @@ class CaptchaDetector:
             return None
     
     def detect_image_captcha(self) -> bool:
-        """Detect if image captcha is present"""
+        """Rasm captcha mavjudligini aniqlash"""
         try:
-            # Check for common image captcha elements
+            # Keng tarqalgan rasm captcha elementlarini tekshirish
             captcha_selectors = [
                 'img[src*="captcha"]',
                 '.captcha',
@@ -173,9 +178,9 @@ class CaptchaDetector:
             return False
     
     def get_captcha_image(self) -> Optional[str]:
-        """Get captcha image as base64"""
+        """Captcha rasmini base64 sifatida olish"""
         try:
-            # Find captcha image
+            # Captcha rasmni topish
             img_selectors = [
                 'img[src*="captcha"]',
                 '.captcha img',

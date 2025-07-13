@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup script for YouTube Automation
+YouTube Avtomatizatsiyasi uchun o'rnatish skripti
 """
 
 import os
@@ -8,14 +8,14 @@ import shutil
 from pathlib import Path
 
 def create_directories():
-    """Create necessary directories"""
+    """Kerakli papkalarni yaratish"""
     directories = ['logs', 'data', 'config']
     for directory in directories:
         Path(directory).mkdir(exist_ok=True)
-        print(f"✓ Created directory: {directory}")
+        print(f"✓ Papka yaratildi: {directory}")
 
 def create_files():
-    """Create necessary files if they don't exist"""
+    """Kerakli fayllarni yaratish (agar mavjud bo'lmasa)"""
     files_to_create = {
         'accounts.txt': 'accounts.txt.example',
         'proxies.txt': 'proxies.txt.example', 
@@ -26,62 +26,62 @@ def create_files():
     for target, source in files_to_create.items():
         if not os.path.exists(target) and os.path.exists(source):
             shutil.copy2(source, target)
-            print(f"✓ Created {target} from {source}")
+            print(f"✓ {target} {source} dan yaratildi")
         elif os.path.exists(target):
-            print(f"✓ {target} already exists")
+            print(f"✓ {target} allaqachon mavjud")
         else:
-            print(f"⚠ {source} not found, please create {target} manually")
+            print(f"⚠ {source} topilmadi, {target} ni qo'lda yarating")
 
 def check_dependencies():
-    """Check if required dependencies are installed"""
+    """Kerakli dasturlar o'rnatilganini tekshirish"""
     try:
         import selenium
-        print("✓ Selenium installed")
+        print("✓ Selenium o'rnatilgan")
     except ImportError:
-        print("✗ Selenium not installed. Run: pip install selenium")
+        print("✗ Selenium o'rnatilmagan. Bajarish: pip install selenium")
     
     try:
         import requests
-        print("✓ Requests installed")
+        print("✓ Requests o'rnatilgan")
     except ImportError:
-        print("✗ Requests not installed. Run: pip install requests")
+        print("✗ Requests o'rnatilmagan. Bajarish: pip install requests")
     
     try:
         import fake_useragent
-        print("✓ Fake-useragent installed")
+        print("✓ Fake-useragent o'rnatilgan")
     except ImportError:
-        print("✗ Fake-useragent not installed. Run: pip install fake-useragent")
+        print("✗ Fake-useragent o'rnatilmagan. Bajarish: pip install fake-useragent")
 
 def main():
-    """Main setup function"""
-    print("🚀 Setting up YouTube Automation...")
+    """Asosiy o'rnatish funksiyasi"""
+    print("🚀 YouTube Avtomatizatsiyasi o'rnatilmoqda...")
     print()
     
-    # Create directories
-    print("📁 Creating directories...")
+    # Papkalarni yaratish
+    print("📁 Papkalar yaratilmoqda...")
     create_directories()
     print()
     
-    # Create files
-    print("📄 Creating configuration files...")
+    # Fayllarni yaratish
+    print("📄 Konfiguratsiya fayllari yaratilmoqda...")
     create_files()
     print()
     
-    # Check dependencies
-    print("🔍 Checking dependencies...")
+    # Dasturlarni tekshirish
+    print("🔍 Dasturlar tekshirilmoqda...")
     check_dependencies()
     print()
     
-    print("✅ Setup completed!")
+    print("✅ O'rnatish tugallandi!")
     print()
-    print("📋 Next steps:")
-    print("1. Edit .env file with your settings")
-    print("2. Add your Google accounts to accounts.txt")
-    print("3. Add proxies to proxies.txt (optional)")
-    print("4. Get Anti-captcha API key from https://anti-captcha.com")
-    print("5. Run: python youtube_automation.py")
+    print("📋 Keyingi qadamlari:")
+    print("1. .env faylini sozlamalaringiz bilan tahrirlang")
+    print("2. accounts.txt ga Google hisoblaringizni qo'shing")
+    print("3. proxies.txt ga proxylarni qo'shing (ixtiyoriy)")
+    print("4. https://anti-captcha.com dan Anti-captcha API kalitini oling")
+    print("5. Bajarish: python youtube_automation.py")
     print()
-    print("⚠️  Remember: Only use this with your own accounts!")
+    print("⚠️  Eslatma: Faqat o'z hisoblaringizda ishlating!")
 
 if __name__ == "__main__":
     main()

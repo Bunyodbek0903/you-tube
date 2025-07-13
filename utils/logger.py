@@ -12,7 +12,7 @@ class Logger:
         self.setup_logger()
     
     def setup_logger(self):
-        """Setup logger configuration"""
+        """Logger konfiguratsiyasini o'rnatish"""
         logger.remove()
         logger.add(
             self.log_file,
@@ -28,23 +28,23 @@ class Logger:
         )
     
     def info(self, message):
-        """Log info message"""
+        """Ma'lumot xabarini log qilish"""
         logger.info(message)
     
     def success(self, message):
-        """Log success message"""
+        """Muvaffaqiyat xabarini log qilish"""
         logger.success(f"{Fore.GREEN}✓ {message}{Style.RESET_ALL}")
     
     def warning(self, message):
-        """Log warning message"""
+        """Ogohlantirish xabarini log qilish"""
         logger.warning(f"{Fore.YELLOW}⚠ {message}{Style.RESET_ALL}")
     
     def error(self, message):
-        """Log error message"""
+        """Xato xabarini log qilish"""
         logger.error(f"{Fore.RED}✗ {message}{Style.RESET_ALL}")
     
     def debug(self, message):
-        """Log debug message"""
+        """Debug xabarini log qilish"""
         logger.debug(message)
 
 class ResultLogger:
@@ -53,7 +53,7 @@ class ResultLogger:
         self.results = self.load_results()
     
     def load_results(self):
-        """Load existing results from file"""
+        """Mavjud natijalarni fayldan yuklash"""
         try:
             with open(self.results_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -67,7 +67,7 @@ class ResultLogger:
             }
     
     def add_result(self, account_info, success, details):
-        """Add result for an account"""
+        """Hisob uchun natija qo'shish"""
         result = {
             "timestamp": datetime.now().isoformat(),
             "email": account_info.get("email", ""),
@@ -86,12 +86,12 @@ class ResultLogger:
         self.save_results()
     
     def save_results(self):
-        """Save results to file"""
+        """Natijalarni faylga saqlash"""
         with open(self.results_file, 'w', encoding='utf-8') as f:
             json.dump(self.results, f, indent=2, ensure_ascii=False)
     
     def get_summary(self):
-        """Get summary of results"""
+        """Natijalar xulosasini olish"""
         return {
             "total": self.results["total_accounts"],
             "successful": self.results["successful"],

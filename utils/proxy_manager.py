@@ -17,16 +17,16 @@ class ProxyScrapeManager:
                               ssl: str = None, anonymity: str = None, 
                               country: str = None) -> List[Dict[str, str]]:
         """
-        Fetch proxies from ProxyScrape API
+        ProxyScrape API dan proxylarni olish
         
         Args:
             proxy_type: http, https, socks4, socks5
-            timeout: timeout in milliseconds
+            timeout: millisekundlarda timeout
             ssl: yes, no, all
             anonymity: elite, anonymous, transparent, all
-            country: country code or 'all'
+            country: mamlakat kodi yoki 'all'
         """
-        # Use config values if not provided
+        # Konfiguratsiya qiymatlarini ishlatish
         if self.config:
             proxy_type = proxy_type or getattr(self.config, 'PROXY_TYPE', 'http')
             timeout = timeout or getattr(self.config, 'PROXY_TIMEOUT', 10000)
@@ -39,10 +39,11 @@ class ProxyScrapeManager:
             ssl = ssl or "all"
             anonymity = anonymity or "all"
             country = country or "all"
+        
         try:
             url = f"{self.base_url}/?request=get&proxy_type={proxy_type}&timeout={timeout}&ssl={ssl}&anonymity={anonymity}&country={country}"
             
-            self.logger.info(f"Fetching proxies from ProxyScrape API...")
+            self.logger.info(f"ProxyScrape API dan proxylar olinmoqda...")
             response = requests.get(url, timeout=30)
             
             if response.status_code == 200:
@@ -56,7 +57,7 @@ class ProxyScrapeManager:
                             ip = parts[0]
                             port = parts[1]
                             
-                            # Handle authentication if present
+                            # Autentifikatsiya mavjud bo'lsa
                             if len(parts) >= 4:
                                 username = parts[2]
                                 password = parts[3]
@@ -72,42 +73,42 @@ class ProxyScrapeManager:
                             
                             proxies.append(proxy_dict)
                 
-                self.logger.success(f"Fetched {len(proxies)} proxies from API")
+                self.logger.success(f"API dan {len(proxies)} ta proxy olindi")
                 return proxies
             else:
-                self.logger.error(f"Failed to fetch proxies: HTTP {response.status_code}")
+                self.logger.error(f"Proxylar olishda xato: HTTP {response.status_code}")
                 return []
                 
         except Exception as e:
-            self.logger.error(f"Error fetching proxies from API: {e}")
+            self.logger.error(f"API dan proxylar olishda xato: {e}")
             return []
     
     def get_proxies_with_cache(self, force_refresh: bool = False) -> List[Dict[str, str]]:
-        """Get proxies with caching mechanism"""
+        """Cache mexanizmi bilan proxylarni olish"""
         current_time = time.time()
         
-        # Check if cache is valid
+        # Cache haqiqatini tekshirish
         if (not force_refresh and 
             self.proxy_cache and 
             current_time - self.last_fetch_time < self.cache_duration):
-            self.logger.info(f"Using cached proxies ({len(self.proxy_cache)} available)")
+            self.logger.info(f"Cache proxylar ishlatilmoqda ({len(self.proxy_cache)} ta mavjud)")
             return self.proxy_cache
         
-        # Fetch new proxies
+        # Yangi proxylarni olish
         self.proxy_cache = self.fetch_proxies_from_api()
         self.last_fetch_time = current_time
         
         return self.proxy_cache
     
     def get_random_proxy(self, force_refresh: bool = False) -> Optional[Dict[str, str]]:
-        """Get a random working proxy"""
+        """Ishlayotgan tasodifiy proxy olish"""
         proxies = self.get_proxies_with_cache(force_refresh)
         
         if not proxies:
-            self.logger.warning("No proxies available")
+            self.logger.warning("Hech qanday proxy mavjud emas")
             return None
         
-        # Test up to 5 random proxies
+        # 5 ta tasodifiy proxyni sinab ko'rish
         tested_proxies = []
         for _ in range(min(5, len(proxies))):
             proxy = random.choice(proxies)
@@ -115,16 +116,16 @@ class ProxyScrapeManager:
                 tested_proxies.append(proxy)
                 
                 if self.test_proxy(proxy):
-                    self.logger.success(f"Found working proxy: {proxy['http']}")
+                    self.logger.success(f"Ishlayotgan proxy topildi: {proxy['http']}")
                     return proxy
                 else:
-                    self.logger.warning(f"Proxy failed: {proxy['http']}")
+                    self.logger.warning(f"Proxy ishlamayapti: {proxy['http']}")
         
-        self.logger.error("No working proxies found")
+        self.logger.error("Ishlayotgan proxy topilmadi")
         return None
     
     def test_proxy(self, proxy: Dict[str, str]) -> bool:
-        """Test if proxy is working"""
+        """Proxy ishlayotganini tekshirish"""
         try:
             response = requests.get(
                 'https://httpbin.org/ip',
@@ -136,11 +137,11 @@ class ProxyScrapeManager:
             return False
     
     def get_proxy_stats(self) -> Dict[str, any]:
-        """Get proxy statistics"""
+        """Proxy statistikalarini olish"""
         proxies = self.get_proxies_with_cache()
         working_count = 0
         
-        for proxy in proxies[:10]:  # Test first 10 proxies
+        for proxy in proxies[:10]:  # Birinchi 10 ta proxyni sinab ko'rish
             if self.test_proxy(proxy):
                 working_count += 1
         
@@ -164,14 +165,14 @@ class ProxyManager:
             self.proxy_scraper = None
     
     def get_proxy(self) -> Optional[Dict[str, str]]:
-        """Get a working proxy"""
+        """Ishlayotgan proxy olish"""
         if self.use_api:
             return self.proxy_scraper.get_random_proxy()
         else:
             return self._get_proxy_from_file()
     
     def _get_proxy_from_file(self) -> Optional[Dict[str, str]]:
-        """Get proxy from local file (fallback method)"""
+        """Mahalliy fayldan proxy olish (fallback usul)"""
         try:
             with open(self.proxy_file, 'r') as f:
                 proxy_lines = [line.strip() for line in f if line.strip()]
@@ -193,21 +194,21 @@ class ProxyManager:
                 }
                 
         except FileNotFoundError:
-            self.logger.warning(f"Proxy file not found: {self.proxy_file}")
+            self.logger.warning(f"Proxy fayli topilmadi: {self.proxy_file}")
             return None
         except Exception as e:
-            self.logger.error(f"Error reading proxy file: {e}")
+            self.logger.error(f"Proxy faylini o'qishda xato: {e}")
             return None
     
     def get_proxy_stats(self) -> Dict[str, any]:
-        """Get proxy statistics"""
+        """Proxy statistikalarini olish"""
         if self.use_api and self.proxy_scraper:
             return self.proxy_scraper.get_proxy_stats()
         else:
             return {'source': 'file', 'total_proxies': 'unknown'}
     
     def refresh_proxies(self):
-        """Force refresh proxy cache"""
+        """Proxy cache'ni majburiy yangilash"""
         if self.use_api and self.proxy_scraper:
             self.proxy_scraper.get_proxies_with_cache(force_refresh=True)
-            self.logger.info("Proxy cache refreshed")
+            self.logger.info("Proxy cache yangilandi")

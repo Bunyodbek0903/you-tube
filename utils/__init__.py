@@ -1,1 +1,1 @@
-# Utils package for YouTube automation
+# YouTube avtomatizatsiyasi uchun utils paketi

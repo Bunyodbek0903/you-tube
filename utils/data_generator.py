@@ -12,53 +12,53 @@ class ChannelDataGenerator:
         ]
         
         self.channel_descriptions = [
-            "Welcome to our channel! We share amazing content about {topic}.",
-            "Join us for the latest updates and insights on {topic}.",
-            "Your daily dose of {topic} content. Subscribe for more!",
-            "Exploring the world of {topic} with you. Let's learn together!",
-            "Professional {topic} content for enthusiasts and beginners alike.",
-            "Discover the best of {topic} with our expert team.",
-            "Your go-to channel for everything {topic} related.",
-            "Quality {topic} content delivered daily.",
-            "Stay updated with the latest in {topic}.",
-            "Your trusted source for {topic} information and entertainment."
+            "Bizning kanalimizga xush kelibsiz! {topic} haqida ajoyib kontentni ulashamiz.",
+            "Eng so'nggi yangiliklar va {topic} haqidagi ma'lumotlar uchun bizga qo'shiling.",
+            "Kundalik {topic} kontentingiz. Ko'proq uchun obuna bo'ling!",
+            "Siz bilan {topic} dunyosini o'rganamiz. Keling, birga o'rganamiz!",
+            "Professional {topic} kontenti - havaskorlar va yangi boshlovchilar uchun.",
+            "Bizning mutaxassis jamoamiz bilan {topic} ning eng yaxshisini kashf eting.",
+            "{topic} bilan bog'liq hamma narsa uchun sizning kanalingiz.",
+            "Kundalik sifatli {topic} kontenti.",
+            "{topic} ning eng so'nggi yangiliklarini kuzatib boring.",
+            "{topic} ma'lumotlari va ko'ngil ochar dasturlar uchun ishonchli manbaangiz."
         ]
         
         self.topics = [
-            "technology", "gaming", "cooking", "travel", "music", "fitness", "art",
-            "science", "comedy", "news", "sports", "movies", "books", "photography",
-            "DIY", "health", "business", "education", "entertainment", "lifestyle"
+            "texnologiya", "o'yinlar", "ovqat pishirish", "sayohat", "musiqa", "jismoniy mashqlar", "san'at",
+            "fan", "komediya", "yangiliklar", "sport", "filmlar", "kitoblar", "fotografiya",
+            "DIY", "sog'liq", "biznes", "ta'lim", "ko'ngil ochar", "hayot tarzi"
         ]
         
         self.categories = [
-            "Education", "Entertainment", "Film & Animation", "Gaming", "How-to & Style",
-            "Music", "News & Politics", "People & Blogs", "Pets & Animals", "Science & Technology",
-            "Sports", "Travel & Events", "Comedy", "Autos & Vehicles", "Nonprofits & Activism"
+            "Ta'lim", "Ko'ngil ochar", "Film va animatsiya", "O'yinlar", "Qanday qilish va uslub",
+            "Musiqa", "Yangiliklar va siyosat", "Odamlar va bloglar", "Uy hayvonlari va hayvonlar", "Fan va texnologiya",
+            "Sport", "Sayohat va tadbirlar", "Komediya", "Avtomobillar va transport vositalari", "Notijorat tashkilotlar va faollik"
         ]
     
     def generate_channel_name(self) -> str:
-        """Generate random channel name"""
+        """Tasodifiy kanal nomi yaratish"""
         base_name = random.choice(self.channel_names)
         suffix = ''.join(random.choices(string.ascii_letters + string.digits, k=3))
         return f"{base_name}{suffix}"
     
     def generate_channel_description(self) -> str:
-        """Generate random channel description"""
+        """Tasodifiy kanal tavsifini yaratish"""
         topic = random.choice(self.topics)
         description = random.choice(self.channel_descriptions).format(topic=topic)
         
-        # Add some random hashtags
+        # Ba'zi tasodifiy hashtag'lar qo'shish
         hashtags = [f"#{topic}", f"#{random.choice(self.topics)}", f"#{random.choice(self.topics)}"]
         description += f" {' '.join(hashtags)}"
         
         return description
     
     def generate_channel_category(self) -> str:
-        """Generate random channel category"""
+        """Tasodifiy kanal kategoriyasini yaratish"""
         return random.choice(self.categories)
     
     def generate_channel_data(self) -> Dict[str, str]:
-        """Generate complete channel data"""
+        """To'liq kanal ma'lumotlarini yaratish"""
         return {
             "name": self.generate_channel_name(),
             "description": self.generate_channel_description(),
@@ -68,7 +68,7 @@ class ChannelDataGenerator:
         }
     
     def generate_keywords(self) -> List[str]:
-        """Generate random keywords for channel"""
+        """Kanal uchun tasodifiy kalit so'zlarni yaratish"""
         keywords = []
         num_keywords = random.randint(3, 8)
         
@@ -79,17 +79,17 @@ class ChannelDataGenerator:
         return keywords
     
     def generate_location(self) -> str:
-        """Generate random location"""
+        """Tasodifiy joylashuv yaratish"""
         locations = [
-            "United States", "United Kingdom", "Canada", "Australia", "Germany",
-            "France", "Japan", "South Korea", "India", "Brazil", "Mexico",
-            "Spain", "Italy", "Netherlands", "Sweden", "Norway", "Denmark",
-            "Finland", "Switzerland", "Austria"
+            "Qo'shma Shtatlar", "Birlashgan Qirollik", "Kanada", "Avstraliya", "Germaniya",
+            "Fransiya", "Yaponiya", "Janubiy Koreya", "Hindiston", "Braziliya", "Meksika",
+            "Ispaniya", "Italiya", "Niderlandiya", "Shvetsiya", "Norvegiya", "Daniya",
+            "Finlyandiya", "Shveytsariya", "Avstriya"
         ]
         return random.choice(locations)
     
     def generate_about_section(self) -> Dict[str, str]:
-        """Generate about section data"""
+        """Haqida bo'limi ma'lumotlarini yaratish"""
         return {
             "description": self.generate_channel_description(),
             "location": self.generate_location(),
@@ -99,20 +99,20 @@ class ChannelDataGenerator:
         }
     
     def generate_website(self) -> str:
-        """Generate random website URL"""
+        """Tasodifiy veb-sayt URL yaratish"""
         domains = ["example.com", "mysite.com", "website.net", "blog.org", "site.io"]
         domain = random.choice(domains)
         return f"https://www.{domain}"
     
     def generate_email(self) -> str:
-        """Generate random email"""
+        """Tasodifiy email yaratish"""
         username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"]
         domain = random.choice(domains)
         return f"{username}@{domain}"
     
     def generate_social_links(self) -> Dict[str, str]:
-        """Generate random social media links"""
+        """Tasodifiy ijtimoiy tarmoq havolalarini yaratish"""
         social_platforms = ["twitter", "instagram", "facebook", "linkedin", "tiktok"]
         links = {}
         
@@ -139,27 +139,27 @@ class AccountDataGenerator:
         ]
     
     def generate_full_name(self) -> str:
-        """Generate random full name"""
+        """Tasodifiy to'liq ism yaratish"""
         first_name = random.choice(self.first_names)
         last_name = random.choice(self.last_names)
         return f"{first_name} {last_name}"
     
     def generate_birth_date(self) -> Dict[str, int]:
-        """Generate random birth date (18+ years old)"""
+        """Tasodifiy tug'ilgan sana yaratish (18+ yosh)"""
         year = random.randint(1980, 2005)
         month = random.randint(1, 12)
-        day = random.randint(1, 28)  # Safe for all months
+        day = random.randint(1, 28)  # Barcha oylar uchun xavfsiz
         return {"year": year, "month": month, "day": day}
     
     def generate_phone_number(self) -> str:
-        """Generate random phone number"""
+        """Tasodifiy telefon raqami yaratish"""
         area_code = random.randint(200, 999)
         prefix = random.randint(200, 999)
         line_number = random.randint(1000, 9999)
         return f"+1{area_code}{prefix}{line_number}"
     
     def generate_recovery_email(self) -> str:
-        """Generate recovery email"""
+        """Tiklash email yaratish"""
         username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
         domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"]
         domain = random.choice(domains)

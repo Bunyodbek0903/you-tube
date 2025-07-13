@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-YouTube Channel Creation Automation
-Automates YouTube channel creation using Google accounts
+YouTube Kanal Yaratish Avtomatizatsiyasi
+Google hisoblarini ishlatib YouTube kanallarini avtomatik yaratish
 """
 
 import time
@@ -41,38 +41,38 @@ class YouTubeAutomation:
         self.driver = None
         
     def setup_driver(self, proxy=None):
-        """Setup Chrome driver with anti-detection measures"""
+        """Anti-detection choralari bilan Chrome driver o'rnatish"""
         try:
             options = self.anti_detection.get_browser_options(self.config.HEADLESS)
             
             if proxy:
-                # Extract proxy URL from proxy dict
+                # Proxy URL ni proxy dict dan ajratib olish
                 proxy_url = proxy.get('http', '').replace('http://', '')
                 if proxy_url:
                     options.add_argument(f'--proxy-server={proxy_url}')
-                    self.logger.info(f"Added proxy to browser: {proxy_url}")
+                    self.logger.info(f"Browserga proxy qo'shildi: {proxy_url}")
             
             service = Service(ChromeDriverManager().install())
             self.driver = webdriver.Chrome(service=service, options=options)
             
-            # Remove automation indicators
+            # Avtomatlashtirish belgilarini olib tashlash
             self.anti_detection.remove_automation_indicators(self.driver)
             
-            # Set window size
+            # Oyna o'lchamini o'rnatish
             self.driver.set_window_size(
                 random.randint(1200, 1920),
                 random.randint(800, 1080)
             )
             
-            self.logger.success("Browser setup completed")
+            self.logger.success("Browser o'rnatish tugallandi")
             return True
             
         except Exception as e:
-            self.logger.error(f"Failed to setup driver: {e}")
+            self.logger.error(f"Driver o'rnatishda xato: {e}")
             return False
     
     def load_accounts(self):
-        """Load accounts from file"""
+        """Fayldan hisoblarni yuklash"""
         try:
             accounts = []
             with open(self.config.ACCOUNTS_FILE, 'r', encoding='utf-8') as f:
@@ -85,26 +85,26 @@ class YouTubeAutomation:
                             'password': password.strip()
                         })
             
-            self.logger.info(f"Loaded {len(accounts)} accounts")
+            self.logger.info(f"{len(accounts)} ta hisob yuklandi")
             return accounts
             
         except FileNotFoundError:
-            self.logger.error(f"Accounts file not found: {self.config.ACCOUNTS_FILE}")
+            self.logger.error(f"Hisoblar fayli topilmadi: {self.config.ACCOUNTS_FILE}")
             return []
         except Exception as e:
-            self.logger.error(f"Error loading accounts: {e}")
+            self.logger.error(f"Hisoblarni yuklashda xato: {e}")
             return []
     
     def login_to_google(self, account):
-        """Login to Google account"""
+        """Google hisobiga kirish"""
         try:
-            self.logger.info(f"Logging in to: {account['email']}")
+            self.logger.info(f"Kirish amalga oshirilmoqda: {account['email']}")
             
-            # Go to Google login page
+            # Google kirish sahifasiga o'tish
             self.driver.get(self.config.YOUTUBE_LOGIN_URL)
             self.anti_detection.random_delay()
             
-            # Enter email
+            # Email kiritish
             email_input = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.NAME, "identifier"))
             )
@@ -114,11 +114,11 @@ class YouTubeAutomation:
             
             self.anti_detection.human_like_delay()
             
-            # Check for captcha
+            # Captcha mavjudligini tekshirish
             if self.detect_and_solve_captcha():
-                self.logger.warning("Captcha detected and solved")
+                self.logger.warning("Captcha aniqlandi va yechildi")
             
-            # Enter password
+            # Parol kiritish
             try:
                 password_input = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.NAME, "password"))
@@ -129,39 +129,39 @@ class YouTubeAutomation:
                 
                 self.anti_detection.human_like_delay()
                 
-                # Check for captcha again
+                # Yana captcha tekshirish
                 if self.detect_and_solve_captcha():
-                    self.logger.warning("Captcha detected and solved")
+                    self.logger.warning("Captcha aniqlandi va yechildi")
                 
             except TimeoutException:
-                self.logger.warning("Password field not found, might be already logged in")
+                self.logger.warning("Parol maydoni topilmadi, allaqachon kiringan bo'lishi mumkin")
             
-            # Wait for login to complete
+            # Kirish tugashini kutish
             time.sleep(3)
             
-            # Check if login was successful
+            # Kirish muvaffaqiyatini tekshirish
             if self.is_logged_in():
-                self.logger.success(f"Successfully logged in to: {account['email']}")
+                self.logger.success(f"Google hisobiga muvaffaqiyatli kirdi: {account['email']}")
                 self.cookie_manager.save_cookies(self.driver, account['email'])
                 return True
             else:
-                self.logger.error(f"Login failed for: {account['email']}")
+                self.logger.error(f"Kirish amalga oshmadi: {account['email']}")
                 return False
                 
         except Exception as e:
-            self.logger.error(f"Login error for {account['email']}: {e}")
+            self.logger.error(f"{account['email']} uchun kirish xatosi: {e}")
             return False
     
     def is_logged_in(self):
-        """Check if user is logged in"""
+        """Foydalanuvchi kiringanini tekshirish"""
         try:
-            # Check for Google account avatar or profile picture
+            # Google hisob avatar yoki profil rasmini tekshirish
             avatar_selectors = [
                 '[data-email]',
                 '[aria-label*="Google Account"]',
                 'img[alt*="profile"]',
-                '.gb_Aa',  # Google account button
-                '[data-ved]'  # Google account indicator
+                '.gb_Aa',  # Google hisob tugmasi
+                '[data-ved]'  # Google hisob ko'rsatkichi
             ]
             
             for selector in avatar_selectors:
@@ -178,11 +178,11 @@ class YouTubeAutomation:
             return False
     
     def detect_and_solve_captcha(self):
-        """Detect and solve captcha if present"""
+        """Captcha mavjudligini aniqlash va yechish"""
         try:
             captcha_detector = CaptchaDetector(self.driver)
             
-            # Check for reCAPTCHA
+            # reCAPTCHA ni tekshirish
             if captcha_detector.detect_recaptcha():
                 site_key = captcha_detector.get_recaptcha_site_key()
                 if site_key:
@@ -190,19 +190,19 @@ class YouTubeAutomation:
                         site_key, self.driver.current_url
                     )
                     if solution:
-                        # Inject the solution
+                        # Yechimni kiritish
                         self.driver.execute_script(
                             f'document.getElementById("g-recaptcha-response").innerHTML = "{solution}";'
                         )
                         return True
             
-            # Check for image captcha
+            # Rasm captcha ni tekshirish
             if captcha_detector.detect_image_captcha():
                 image_src = captcha_detector.get_captcha_image()
                 if image_src:
                     solution = self.captcha_solver.solve_image_captcha_base64(image_src)
                     if solution:
-                        # Find captcha input and fill it
+                        # Captcha input ni topish va to'ldirish
                         try:
                             captcha_input = self.driver.find_element(By.CSS_SELECTOR, 'input[name*="captcha"]')
                             captcha_input.clear()
@@ -214,47 +214,47 @@ class YouTubeAutomation:
             return False
             
         except Exception as e:
-            self.logger.error(f"Error solving captcha: {e}")
+            self.logger.error(f"Captcha yechishda xato: {e}")
             return False
     
     def type_like_human(self, element, text):
-        """Type text like a human with random delays"""
+        """Matnni inson kabi tasodifiy kechikishlar bilan yozish"""
         for char in text:
             element.send_keys(char)
             time.sleep(random.uniform(0.05, 0.15))
     
     def navigate_to_youtube(self):
-        """Navigate to YouTube"""
+        """YouTube ga o'tish"""
         try:
             self.driver.get("https://www.youtube.com")
             self.anti_detection.random_delay()
             
-            # Check if we need to switch to channel
+            # Kanalga o'tish kerakligini tekshirish
             if self.is_logged_in():
-                self.logger.info("Navigated to YouTube successfully")
+                self.logger.info("YouTube ga muvaffaqiyatli o'tildi")
                 return True
             else:
-                self.logger.error("Not logged in, cannot navigate to YouTube")
+                self.logger.error("Kirmagan, YouTube ga o'ta olmaydi")
                 return False
                 
         except Exception as e:
-            self.logger.error(f"Error navigating to YouTube: {e}")
+            self.logger.error(f"YouTube ga o'tishda xato: {e}")
             return False
     
     def create_youtube_channel(self, account):
-        """Create YouTube channel for the account"""
+        """Hisob uchun YouTube kanal yaratish"""
         try:
-            self.logger.info(f"Creating YouTube channel for: {account['email']}")
+            self.logger.info(f"YouTube kanal yaratilmoqda: {account['email']}")
             
-            # Navigate to YouTube
+            # YouTube ga o'tish
             if not self.navigate_to_youtube():
                 return False
             
-            # Go to channel creation page
+            # Kanal yaratish sahifasiga o'tish
             self.driver.get("https://www.youtube.com/channel_switcher")
             self.anti_detection.random_delay()
             
-            # Look for "Create channel" button
+            # "Kanal yaratish" tugmasini qidirish
             create_channel_selectors = [
                 'a[href*="create_channel"]',
                 'button[aria-label*="Create channel"]',
@@ -272,20 +272,20 @@ class YouTubeAutomation:
                     continue
             
             if not create_button:
-                # Try to find any link that might lead to channel creation
+                # Kanal yaratishga olib boradigan har qanday havolani topishga harakat qilish
                 try:
                     create_button = self.driver.find_element(By.CSS_SELECTOR, 'a[href*="channel"]')
                 except NoSuchElementException:
-                    self.logger.error("Could not find channel creation button")
+                    self.logger.error("Kanal yaratish tugmasi topilmadi")
                     return False
             
             create_button.click()
             self.anti_detection.human_like_delay()
             
-            # Generate channel data
+            # Kanal ma'lumotlarini yaratish
             channel_data = self.channel_generator.generate_channel_data()
             
-            # Fill channel name
+            # Kanal nomini to'ldirish
             try:
                 name_input = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, 'input[name*="name"], input[placeholder*="name"]'))
@@ -293,52 +293,52 @@ class YouTubeAutomation:
                 name_input.clear()
                 self.type_like_human(name_input, channel_data['name'])
             except TimeoutException:
-                self.logger.warning("Could not find channel name input")
+                self.logger.warning("Kanal nomi input maydoni topilmadi")
             
-            # Fill channel description
+            # Kanal tavsifini to'ldirish
             try:
                 desc_input = self.driver.find_element(By.CSS_SELECTOR, 'textarea[name*="description"], textarea[placeholder*="description"]')
                 desc_input.clear()
                 self.type_like_human(desc_input, channel_data['description'])
             except NoSuchElementException:
-                self.logger.warning("Could not find description input")
+                self.logger.warning("Tavsif input maydoni topilmadi")
             
-            # Select category
+            # Kategoriyani tanlash
             try:
                 category_select = self.driver.find_element(By.CSS_SELECTOR, 'select[name*="category"], select[aria-label*="category"]')
                 from selenium.webdriver.support.ui import Select
                 select = Select(category_select)
                 select.select_by_visible_text(channel_data['category'])
             except NoSuchElementException:
-                self.logger.warning("Could not find category select")
+                self.logger.warning("Kategoriya tanlash maydoni topilmadi")
             
-            # Submit the form
+            # Formani yuborish
             try:
                 submit_button = self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"], input[type="submit"]')
                 submit_button.click()
                 self.anti_detection.human_like_delay()
             except NoSuchElementException:
-                self.logger.warning("Could not find submit button")
+                self.logger.warning("Yuborish tugmasi topilmadi")
             
-            # Wait for channel creation to complete
+            # Kanal yaratish tugashini kutish
             time.sleep(5)
             
-            # Check if channel was created successfully
+            # Kanal muvaffaqiyatli yaratilganini tekshirish
             if self.check_channel_created():
-                self.logger.success(f"Channel created successfully for: {account['email']}")
+                self.logger.success(f"Kanal muvaffaqiyatli yaratildi: {account['email']}")
                 return True
             else:
-                self.logger.error(f"Channel creation failed for: {account['email']}")
+                self.logger.error(f"Kanal yaratish amalga oshmadi: {account['email']}")
                 return False
                 
         except Exception as e:
-            self.logger.error(f"Error creating channel for {account['email']}: {e}")
+            self.logger.error(f"{account['email']} uchun kanal yaratishda xato: {e}")
             return False
     
     def check_channel_created(self):
-        """Check if channel was created successfully"""
+        """Kanal muvaffaqiyatli yaratilganini tekshirish"""
         try:
-            # Look for indicators of successful channel creation
+            # Muvaffaqiyatli kanal yaratish ko'rsatkichlarini qidirish
             success_indicators = [
                 'a[href*="/channel/"]',
                 '[data-ved*="channel"]',
@@ -360,79 +360,79 @@ class YouTubeAutomation:
             return False
     
     def process_account(self, account):
-        """Process a single account"""
+        """Bitta hisobni qayta ishlash"""
         try:
-            self.logger.info(f"Processing account: {account['email']}")
+            self.logger.info(f"Hisob qayta ishlanmoqda: {account['email']}")
             
-            # Setup driver with proxy if available
+            # Proxy mavjud bo'lsa driver o'rnatish
             proxy = None
             if self.config.USE_PROXY:
                 proxy = self.security_manager.get_working_proxy()
                 if proxy:
-                    self.logger.info(f"Using proxy: {proxy['http']}")
+                    self.logger.info(f"Proxy ishlatilmoqda: {proxy['http']}")
                 else:
-                    self.logger.warning("No working proxy found, continuing without proxy")
+                    self.logger.warning("Ishlayotgan proxy topilmadi, proxy siz davom etilmoqda")
             
             if not self.setup_driver(proxy):
                 return False
             
-            # Login to Google
+            # Google ga kirish
             if not self.login_to_google(account):
                 return False
             
-            # Create YouTube channel
+            # YouTube kanal yaratish
             if not self.create_youtube_channel(account):
                 return False
             
-            self.logger.success(f"Successfully processed account: {account['email']}")
+            self.logger.success(f"Hisob muvaffaqiyatli qayta ishlandi: {account['email']}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Error processing account {account['email']}: {e}")
+            self.logger.error(f"{account['email']} hisobini qayta ishlashda xato: {e}")
             return False
         finally:
             if self.driver:
                 self.driver.quit()
     
     def run(self):
-        """Main execution method"""
+        """Asosiy bajarish metodi"""
         try:
-            self.logger.info("Starting YouTube automation")
+            self.logger.info("YouTube avtomatizatsiyasi boshlanmoqda")
             
-            # Load accounts
+            # Hisoblarni yuklash
             accounts = self.load_accounts()
             if not accounts:
-                self.logger.error("No accounts found to process")
+                self.logger.error("Qayta ishlash uchun hisob topilmadi")
                 return
             
-            # Process each account
+            # Har bir hisobni qayta ishlash
             for i, account in enumerate(accounts, 1):
-                self.logger.info(f"Processing account {i}/{len(accounts)}")
+                self.logger.info(f"Hisob qayta ishlanmoqda {i}/{len(accounts)}")
                 
                 success = self.process_account(account)
                 
-                # Log result
-                details = "Channel created successfully" if success else "Failed to create channel"
+                # Natijani log qilish
+                details = "Kanal muvaffaqiyatli yaratildi" if success else "Kanal yaratish amalga oshmadi"
                 self.result_logger.add_result(account, success, details)
                 
-                # Random delay between accounts
+                # Hisoblar orasida tasodifiy kechikish
                 if i < len(accounts):
                     delay = random.uniform(30, 60)
-                    self.logger.info(f"Waiting {delay:.1f} seconds before next account...")
+                    self.logger.info(f"Keyingi hisob oldidan {delay:.1f} soniya kutilmoqda...")
                     time.sleep(delay)
             
-            # Print summary
+            # Xulosa chop etish
             summary = self.result_logger.get_summary()
-            self.logger.success(f"Processing completed!")
-            self.logger.info(f"Total accounts: {summary['total']}")
-            self.logger.info(f"Successful: {summary['successful']}")
-            self.logger.info(f"Failed: {summary['failed']}")
-            self.logger.info(f"Success rate: {summary['success_rate']}")
+            self.logger.success(f"Qayta ishlash tugallandi!")
+            self.logger.info(f"Jami hisoblar: {summary['total']}")
+            self.logger.info(f"Muvaffaqiyatli: {summary['successful']}")
+            self.logger.info(f"Amalga oshmagan: {summary['failed']}")
+            self.logger.info(f"Muvaffaqiyat darajasi: {summary['success_rate']}")
             
         except KeyboardInterrupt:
-            self.logger.warning("Process interrupted by user")
+            self.logger.warning("Foydalanuvchi tomonidan jarayon to'xtatildi")
         except Exception as e:
-            self.logger.error(f"Unexpected error: {e}")
+            self.logger.error(f"Kutilmagan xato: {e}")
         finally:
             if self.driver:
                 self.driver.quit()

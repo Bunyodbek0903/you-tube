@@ -17,16 +17,8 @@ class SecurityManager:
         self.user_agents = self.load_user_agents()
         self.ua = UserAgent()
     
-    def load_proxies(self) -> List[str]:
-        """Load proxies from file (legacy method)"""
-        try:
-            with open(self.proxy_file, 'r') as f:
-                return [line.strip() for line in f if line.strip()]
-        except FileNotFoundError:
-            return []
-    
     def load_user_agents(self) -> List[str]:
-        """Load custom user agents from file"""
+        """Fayldan user agentlarni yuklash"""
         try:
             with open(self.user_agent_file, 'r') as f:
                 return [line.strip() for line in f if line.strip()]
@@ -34,17 +26,17 @@ class SecurityManager:
             return []
     
     def get_random_user_agent(self) -> str:
-        """Get random user agent"""
+        """Tasodifiy user agent olish"""
         if self.user_agents:
             return random.choice(self.user_agents)
         return self.ua.random
     
     def get_random_proxy(self) -> Optional[Dict[str, str]]:
-        """Get random proxy using API or file"""
+        """API yoki fayl orqali tasodifiy proxy olish"""
         if self.use_proxy_api:
             return self.proxy_manager.get_proxy()
         else:
-            # Fallback to file-based method
+            # Fayl asosida ishlash
             if not hasattr(self, 'proxies'):
                 self.proxies = self.load_proxies()
             
@@ -63,8 +55,16 @@ class SecurityManager:
                     'https': f'http://{proxy}'
                 }
     
+    def load_proxies(self) -> List[str]:
+        """Fayldan proxylarni yuklash (eski usul)"""
+        try:
+            with open(self.proxy_file, 'r') as f:
+                return [line.strip() for line in f if line.strip()]
+        except FileNotFoundError:
+            return []
+    
     def test_proxy(self, proxy: Dict[str, str]) -> bool:
-        """Test if proxy is working"""
+        """Proxy ishlayotganini tekshirish"""
         try:
             response = requests.get(
                 'https://httpbin.org/ip',
@@ -76,18 +76,18 @@ class SecurityManager:
             return False
     
     def get_working_proxy(self) -> Optional[Dict[str, str]]:
-        """Get a working proxy"""
+        """Ishlayotgan proxy olish"""
         if self.use_proxy_api:
             return self.proxy_manager.get_proxy()
         else:
-            # Fallback to file-based method
+            # Fayl asosida ishlash
             if not hasattr(self, 'proxies'):
                 self.proxies = self.load_proxies()
             
             if not self.proxies:
                 return None
             
-            # Test up to 5 random proxies
+            # 5 ta tasodifiy proxyni sinab ko'rish
             for _ in range(5):
                 proxy = self.get_random_proxy()
                 if proxy and self.test_proxy(proxy):
@@ -100,20 +100,20 @@ class AntiDetection:
         self.security_manager = SecurityManager()
     
     def random_delay(self, min_delay: float = 2, max_delay: float = 5):
-        """Random delay between actions"""
+        """Harakatlar orasida tasodifiy kechikish"""
         delay = random.uniform(min_delay, max_delay)
         time.sleep(delay)
     
     def human_like_delay(self):
-        """More human-like delay pattern"""
-        # Sometimes longer delays
-        if random.random() < 0.1:  # 10% chance
+        """Insonga o'xshash kechikish modeli"""
+        # Ba'zan uzoqroq kechikishlar
+        if random.random() < 0.1:  # 10% ehtimollik
             time.sleep(random.uniform(8, 15))
         else:
             time.sleep(random.uniform(1, 4))
     
     def get_browser_options(self, headless: bool = False):
-        """Get browser options with anti-detection measures"""
+        """Anti-detection choralari bilan browser opsiyalarini olish"""
         from selenium.webdriver.chrome.options import Options
         
         options = Options()
@@ -121,18 +121,18 @@ class AntiDetection:
         if headless:
             options.add_argument('--headless')
         
-        # Anti-detection measures
+        # Anti-detection choralari
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
         
-        # Random user agent
+        # Tasodifiy user agent
         user_agent = self.security_manager.get_random_user_agent()
         options.add_argument(f'--user-agent={user_agent}')
         
-        # Window size
+        # Oyna o'lchami
         width = random.randint(1200, 1920)
         height = random.randint(800, 1080)
         options.add_argument(f'--window-size={width},{height}')
@@ -140,11 +140,11 @@ class AntiDetection:
         return options
     
     def execute_script(self, driver, script: str):
-        """Execute JavaScript to remove automation indicators"""
+        """Avtomatlashtirish belgilarini olib tashlash uchun JavaScript bajarish"""
         driver.execute_script(script)
     
     def remove_automation_indicators(self, driver):
-        """Remove automation indicators from browser"""
+        """Browserdan avtomatlashtirish belgilarini olib tashlash"""
         scripts = [
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})",
             "Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]})",
@@ -163,20 +163,20 @@ class CookieManager:
         self.cookies = {}
     
     def save_cookies(self, driver, account_email: str):
-        """Save cookies for an account"""
+        """Hisob uchun cookie'larni saqlash"""
         try:
             cookies = driver.get_cookies()
             self.cookies[account_email] = cookies
         except Exception as e:
-            print(f"Error saving cookies: {e}")
+            print(f"Cookie saqlashda xato: {e}")
     
     def load_cookies(self, driver, account_email: str):
-        """Load cookies for an account"""
+        """Hisob uchun cookie'larni yuklash"""
         if account_email in self.cookies:
             try:
                 for cookie in self.cookies[account_email]:
                     driver.add_cookie(cookie)
                 return True
             except Exception as e:
-                print(f"Error loading cookies: {e}")
+                print(f"Cookie yuklashda xato: {e}")
         return False

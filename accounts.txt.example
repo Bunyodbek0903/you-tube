@@ -1,10 +1,10 @@
-# Format: email:password
-# One account per line
-# Example:
-# user1@gmail.com:password123
-# user2@gmail.com:password456
-# user3@gmail.com:password789
+# Format: email:parol
+# Har bir hisob uchun bitta qator
+# Misol:
+# user1@gmail.com:parol123
+# user2@gmail.com:parol456
+# user3@gmail.com:parol789
 
-# Add your Google accounts here:
-# email1@gmail.com:password1
-# email2@gmail.com:password2
+# Google hisoblaringizni bu yerga qo'shing:
+# email1@gmail.com:parol1
+# email2@gmail.com:parol2
